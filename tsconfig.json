@@ -1,0 +1,29 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2015",
+    "lib": ["ES2015"],
+    "moduleResolution": "node",
+    "rootDir": "lib",
+    "baseUrl": "lib",
+    "outDir": "dist",
+    "paths": {
+      "@lib/*": ["./*"],
+    },
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "jsx": "react"
+  },
+  "include": ["lib"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "docs",
+    "examples",
+    "tests",
+  ],
+}
