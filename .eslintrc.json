@@ -1,22 +1,25 @@
 {
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "ecmaVersion": 2020,
+    "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": ["import", "simple-import-sort", "@typescript-eslint", "unused-imports"],
+  "plugins": ["import", "simple-import-sort", "@typescript-eslint", "unused-imports", "react-refresh"],
   "extends": [
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:import/typescript",
+    "plugin:react/recommended",
+    "plugin:react/jsx-runtime",
+    "plugin:react-hooks/recommended",
     "prettier"
   ],
   "env": {
-    "node": true
+    "browser": true, 
+    "es2020": true
   },
   "rules": {
-    "@typescript-eslint/no-explicit-any": ["off"],
     "import/no-unresolved": "error",
     "simple-import-sort/imports": [
       "error",
@@ -38,9 +41,59 @@
       "warn",
       { "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }
     ],
-    "@typescript-eslint/consistent-type-definitions": ["error", "type"]
+    "react-refresh/only-export-components": [
+      "warn",
+      { "allowConstantExport": true },
+    ],
+    
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/consistent-type-definitions": ["error", "type"],
+    "@typescript-eslint/array-type": ["error", { "default": "array-simple" }],
+    "@typescript-eslint/naming-convention": [
+      "error",
+      {
+        "selector": ["variable", "property"],
+        "format": ["camelCase", "UPPER_CASE", "PascalCase"]
+      },
+      {
+        "selector": "function",
+        "format": ["camelCase", "PascalCase"]
+      },
+      {
+        "selector": ["typeLike", "enumMember"],
+        "format": ["PascalCase"]
+      },
+      {
+        "selector": ["parameter", "method"],
+        "format": ["camelCase", "PascalCase"],
+        "leadingUnderscore": "allow"
+      }
+    ],
+    "@typescript-eslint/ban-types": [
+      "error",
+      {
+        "types": {
+          "object": "Use 'Record<string, T>' instead."
+        },
+        "extendDefaults": true
+      }
+    ],
+    "@typescript-eslint/consistent-type-imports": [
+      "error",
+      {
+        "prefer": "type-imports",
+        "fixStyle": "separate-type-imports"
+      }
+    ],
+    "@typescript-eslint/consistent-type-exports": [
+      "error",
+      {
+        "fixMixedExportsWithInlineTypeSpecifier": false
+      }
+    ]
   },
   "settings": {
+    "react": { "version": "18.3" },
     "import/parsers": {
       "@typescript-eslint/parser": [".ts"]
     },

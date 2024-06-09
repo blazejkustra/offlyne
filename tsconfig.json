@@ -2,8 +2,8 @@
   "compileOnSave": true,
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es2015",
-    "lib": ["ES2015"],
+    "target": "ES2020",
+    "lib": ["ES2020"],
     "moduleResolution": "node",
     "rootDir": "lib",
     "baseUrl": "lib",
@@ -22,8 +22,6 @@
   "exclude": [
     "node_modules",
     "dist",
-    "docs",
     "examples",
-    "tests",
   ],
 }
