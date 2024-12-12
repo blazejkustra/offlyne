@@ -9,42 +9,58 @@ const off = offlyne.createManager({
   userName: offlyne.state.schema(z.string()),
 });
 
-interface State {
-  stores: typeof off;
-}
-
 declare module 'offlyne' {
-  export interface OfflyneState extends State {}
+  interface ManagerContext {
+    off: typeof off;
+  }
+
+  export interface OfflyneContext extends ManagerContext {}
 }
 
 // <offlyne.Provider manager={off}>
 //   <App />
 // </offlyne.Provider>
 
-off.preferences.acceptedCookies.set(true);
-off.preferences.acceptedCookies.get();
-off.preferences.acceptedCookies.actions.accept();
+// 1. Test: Preferences State
+off.preferences.acceptedCookies.set(true); // Set cookies to true
+off.preferences.acceptedCookies.get(); // Get current cookie state
+off.preferences.acceptedCookies.actions.accept(); // Run `accept` action
+off.preferences.acceptedCookies.actions.decline(); // Run `decline` action
 
-off.lists.actions.createList({ name: 'My List' });
-off.lists('123').invalidate();
-off.lists.cancel();
-off.lists('123').cancel();
+const [acceptedCookies, setAcceptedCookies] = off.preferences.acceptedCookies.useState(); // Test hooks
+setAcceptedCookies(false); // Update cookie state using the hook
+const { accept, decline } = off.preferences.acceptedCookies.useActions(); // Get all actions
 
-off.clear();
-off.lists.clear();
+// 2. Test: Lists State
+off.lists.actions.createList({ name: 'My List' }); // Create a new list in `lists`
+off.lists('123').invalidate(); // Invalidate list with ID '123'
+off.lists('123').cancel(); // Cancel updates for list ID '123'
+off.lists('123').clear(); // Clear state for list ID '123'
 
-const [acceptedCookies, setAcceptedCookies] = off.preferences.acceptedCookies.useState();
-const { accept, decline } = off.preferences.acceptedCookies.useActions();
+const [lists, listsOptions] = off.lists.useAsyncState(); // Fetch all lists using hook
+const { createList } = off.lists.useActions(); // Fetch `createList` action for all lists
 
-// all lists
-const [lists, listsOptions] = off.lists.useAsyncState();
-const { createList } = off.lists.useActions();
+const [list, listOptions] = // Fetch single list's async state
+  off.lists('123').useAsyncState();
+const {
+  renameList,
+  leaveList,
+} = // Get actions for the single list
+  off.lists('123').useActions();
 
-const [list, listsOption] = off.lists('123').useAsyncState();
-const { renameList, leaveList } = off.lists('123').useActions();
+// 3. Test: Nested Collections in Lists
+const [items, itemsOptions] = // Fetch nested items state
+  off.lists('123').items('789').useAsyncState();
+const { updateItem } = off.lists('123').items('789').useActions(); // Run actions on `items('789')`
+const { createItem } = off.lists('123').items.useActions(); // Run collection-level action for `items`
 
-const [items, itemsOptions] = off.lists('123').items('789').useAsyncState();
-const { createItem } = off.lists('123').items.useActions();
-const { updateItem } = off.lists('123').items('789').useActions();
+// 4. Test: Global Manager State
+off.lists.invalidate(); // Invalidate all lists
+off.lists.cancel(); // Cancel all lists' async operations
+off.lists.clear(); // Clear all lists' state
+off.clear(); // Clear everything globally
 
-const [user, userOptions] = off.userName.useAsyncState();
+// 5. Test: Standalone userName state
+off.userName.set('John Doe'); // Set username state
+const userName = off.userName.get(); // Get username state
+const [user, userAsyncOptions] = off.userName.useAsyncState(); // Hook for async state
