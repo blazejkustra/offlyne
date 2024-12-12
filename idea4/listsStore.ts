@@ -12,7 +12,7 @@ const itemsState = offlyne.state.async
   .actions((ctx) => ({
     createItem: (data: unknown) => data,
   }))
-  .many('itemId')
+  .collection('itemId')
   .actions((ctx) => ({
     updateItem: (data: unknown) => data,
     removeItem: () => {
@@ -37,7 +37,7 @@ const listsState = offlyne.state.async
       return `POST /lists/create`;
     },
   }))
-  .many('listId')
+  .collection('listId')
   .actions((ctx) => ({
     renameList: (name: string) => name,
     removeList: () => {},
