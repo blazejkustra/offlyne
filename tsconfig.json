@@ -3,7 +3,7 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "ES2020",
-    "lib": ["ES2020"],
+    "lib": ["ES2020", "DOM"],
     "moduleResolution": "node",
     "rootDir": "lib",
     "baseUrl": "lib",
@@ -18,7 +18,7 @@
     "experimentalDecorators": true,
     "jsx": "react"
   },
-  "include": ["lib"],
+  "include": ["lib", "oldIdeas/idea1", "oldIdeas/oldIdeas/idea5", "oldIdeas/idea3", "idea5"],
   "exclude": [
     "node_modules",
     "dist",
