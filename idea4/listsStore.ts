@@ -7,7 +7,7 @@ const itemSchema = z.object({
 });
 
 // key: 'lists/${listId}/items/${itemId}'
-const itemsState = offlyne.state.async
+const itemsState = offlyne.state
   .schema(itemSchema)
   .actions((ctx) => ({
     createItem: (data: unknown) => data,
@@ -26,7 +26,7 @@ const listSchema = z.object({
 });
 
 // key: 'lists/${listId}'
-const listsState = offlyne.state.async
+const listsState = offlyne.state
   .schema(listSchema)
   .getter(() => {})
   .actions((ctx) => ({
@@ -43,6 +43,6 @@ const listsState = offlyne.state.async
     removeList: () => {},
     leaveList: () => {},
   }))
-  .nest({ items: itemsState });
+  .compose({ items: itemsState });
 
 export default listsState;

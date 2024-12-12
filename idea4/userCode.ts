@@ -6,7 +6,7 @@ import listsState from './listsStore';
 const off = offlyne.manager({
   preferences,
   lists: listsState,
-  userName: offlyne.state.async.schema(z.string()),
+  userName: offlyne.state.schema(z.string()),
 });
 
 interface State {

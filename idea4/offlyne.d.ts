@@ -14,28 +14,29 @@ declare module 'offlyne' {
     TActions = unknown,
     TCollectionActions = unknown,
     TId = unknown,
-    TNestedState = unknown,
-    TCollectionNestedState = unknown,
+    TComposedState = unknown,
+    TCollectionComposedState = unknown,
   > {
-    get async(): StateBuilder<TType, TActions, TCollectionActions, TId, TNestedState, TCollectionNestedState>;
     schema<TNewType extends z.ZodType<any, any, any>>(
       type: TNewType,
-    ): StateBuilder<z.infer<TNewType>, TActions, TCollectionActions, TId, TNestedState, TCollectionNestedState>;
-    getter(getter: GetterFunction): StateBuilder<TType, TActions, TCollectionActions, TId, TNestedState, TCollectionNestedState>;
+    ): StateBuilder<z.infer<TNewType>, TActions, TCollectionActions, TId, TComposedState, TCollectionComposedState>;
+    getter(
+      getter: GetterFunction,
+    ): StateBuilder<TType, TActions, TCollectionActions, TId, TComposedState, TCollectionComposedState>;
     collection<TNewId extends string>(
       id: TNewId,
-    ): StateBuilder<TType, TActions, TCollectionActions, TNewId, TNestedState, TCollectionNestedState>;
+    ): StateBuilder<TType, TActions, TCollectionActions, TNewId, TComposedState, TCollectionComposedState>;
 
-    nest<TNewNestedState extends Record<string, StateBuilder>>(
-      nestedState: TNewNestedState,
+    compose<TNewComposedState extends Record<string, StateBuilder>>(
+      state: TNewComposedState,
     ): IsEqual<TId, unknown> extends true
-      ? StateBuilder<TType, TActions, TCollectionActions, TId, TNewNestedState, TCollectionNestedState>
-      : StateBuilder<TType, TActions, TCollectionActions, TId, TNestedState, TNewNestedState>;
+      ? StateBuilder<TType, TActions, TCollectionActions, TId, TNewComposedState, TCollectionComposedState>
+      : StateBuilder<TType, TActions, TCollectionActions, TId, TComposedState, TNewComposedState>;
     actions<TNewActions extends ActionsContext>(
       ctx: TNewActions,
     ): IsEqual<TId, unknown> extends true
-      ? StateBuilder<TType, ReturnType<TNewActions>, TCollectionActions, TId, TNestedState, TCollectionNestedState>
-      : StateBuilder<TType, TActions, ReturnType<TNewActions>, TId, TNestedState, TCollectionNestedState>;
+      ? StateBuilder<TType, ReturnType<TNewActions>, TCollectionActions, TId, TComposedState, TCollectionComposedState>
+      : StateBuilder<TType, TActions, ReturnType<TNewActions>, TId, TComposedState, TCollectionComposedState>;
   }
 
   class SyncState<
@@ -43,8 +44,8 @@ declare module 'offlyne' {
     TActions = unknown,
     TCollectionActions = unknown,
     TId = unknown,
-    TNestedState = unknown,
-    TCollectionNestedState = unknown,
+    TComposedState = unknown,
+    TCollectionComposedState = unknown,
   > {
     actions: TActions;
     set(value: TType): void;
@@ -59,25 +60,25 @@ declare module 'offlyne' {
     useActions(): TActions;
   }
 
-  type CreateState<TType, TActions, TCollectionActions, TId, TNestedState, TCollectionNestedState> = SyncState<
+  type CreateState<TType, TActions, TCollectionActions, TId, TComposedState, TCollectionComposedState> = SyncState<
     TType,
     TActions,
     TCollectionActions,
     TId,
-    TNestedState,
-    TCollectionNestedState
+    TComposedState,
+    TCollectionComposedState
   > &
-    TransformToState<TNestedState> &
-    CollectionState<TType, TActions, TCollectionActions, TId, TNestedState, TCollectionNestedState>;
+    TransformToState<TComposedState> &
+    CollectionState<TType, TActions, TCollectionActions, TId, TComposedState, TCollectionComposedState>;
 
-  type CollectionState<TType, TActions, TCollectionActions, TId, TNestedState, TCollectionNestedState> = IsEqual<
+  type CollectionState<TType, TActions, TCollectionActions, TId, TComposedState, TCollectionComposedState> = IsEqual<
     TId,
     unknown
   > extends true
     ? unknown
     : {
-        (id: string): SyncState<TType, TCollectionActions, never, TId, TNestedState, TCollectionNestedState> &
-          TransformToState<TCollectionNestedState>;
+        (id: string): SyncState<TType, TCollectionActions, never, TId, TComposedState, TCollectionComposedState> &
+          TransformToState<TCollectionComposedState>;
       };
 
   type TransformToState<T> = T extends StateBuilder<
@@ -85,10 +86,10 @@ declare module 'offlyne' {
     infer TActions,
     infer TCollectionActions,
     infer TId,
-    infer TNestedState,
-    infer TCollectionNestedState
+    infer TComposedState,
+    infer TCollectionComposedState
   >
-    ? CreateState<TType, TActions, TCollectionActions, TId, TNestedState, TCollectionNestedState>
+    ? CreateState<TType, TActions, TCollectionActions, TId, TComposedState, TCollectionComposedState>
     : T extends Record<string, any>
     ? { [K in keyof T]: TransformToState<T[K]> }
     : T;
