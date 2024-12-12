@@ -60,7 +60,7 @@ declare module 'offlyne' {
     useActions(): TActions;
   }
 
-  type CreateState<TType, TActions, TCollectionActions, TId, TComposedState, TCollectionComposedState> = SyncState<
+  type State<TType, TActions, TCollectionActions, TId, TComposedState, TCollectionComposedState> = SyncState<
     TType,
     TActions,
     TCollectionActions,
@@ -89,14 +89,14 @@ declare module 'offlyne' {
     infer TComposedState,
     infer TCollectionComposedState
   >
-    ? CreateState<TType, TActions, TCollectionActions, TId, TComposedState, TCollectionComposedState>
+    ? State<TType, TActions, TCollectionActions, TId, TComposedState, TCollectionComposedState>
     : T extends Record<string, any>
     ? { [K in keyof T]: TransformToState<T[K]> }
     : T;
 
-  export function manager<T>(stateBuilder: T): TransformToState<T> & { clear: () => void };
+  export function createManager<T>(stateBuilder: T): TransformToState<T> & { clear: () => void };
 
   export const state: StateBuilder;
 
-  export function store<T>(ctx: T): T;
+  export function store<T extends Record<string, StateBuilder>>(ctx: T): T;
 }

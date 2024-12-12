@@ -3,7 +3,7 @@ import z from 'zod';
 import preferences from './preferencesStore';
 import listsState from './listsStore';
 
-const off = offlyne.manager({
+const off = offlyne.createManager({
   preferences,
   lists: listsState,
   userName: offlyne.state.schema(z.string()),
