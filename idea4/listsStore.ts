@@ -7,12 +7,8 @@ const itemSchema = z.object({
 });
 
 // key: 'lists/${listId}/items/${itemId}'
-const itemsState = offlyne.state
+const itemState = offlyne.state
   .schema(itemSchema)
-  .actions((ctx) => ({
-    createItem: (data: unknown) => data,
-  }))
-  .collection('itemId')
   .actions((ctx) => ({
     updateItem: (data: unknown) => data,
     removeItem: () => ({
@@ -23,14 +19,33 @@ const itemsState = offlyne.state
   }))
   .getter(() => {});
 
+// key: 'lists/${listId}/items'
+const itemsState = offlyne.state
+  .schema(z.record(itemSchema))
+  .actions((ctx) => ({
+    createItem: (data: unknown) => data,
+  }))
+  .collection({ id: 'itemId', state: itemState });
+
 const listSchema = z.object({
   listId: z.string(),
   name: z.string(),
 });
 
 // key: 'lists/${listId}'
-const listsState = offlyne.state
+const listState = offlyne.state
   .schema(listSchema)
+  .getter(() => {})
+  .actions((ctx) => ({
+    renameList: (name: string) => name,
+    removeList: () => {},
+    leaveList: () => {},
+  }))
+  .compose({ items: itemsState });
+
+// key: 'lists'
+const listsState = offlyne.state
+  .schema(z.record(listSchema))
   .getter(() => {})
   .actions((ctx) => ({
     createList: async (data: any) => {
@@ -40,12 +55,6 @@ const listsState = offlyne.state
       return `POST /lists/create`;
     },
   }))
-  .collection('listId')
-  .actions((ctx) => ({
-    renameList: (name: string) => name,
-    removeList: () => {},
-    leaveList: () => {},
-  }))
-  .compose({ items: itemsState });
+  .collection({ id: 'listId', state: listState });
 
 export default listsState;
