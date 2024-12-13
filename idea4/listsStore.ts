@@ -15,10 +15,13 @@ const itemsState = offlyne.state
   .collection('itemId')
   .actions((ctx) => ({
     updateItem: (data: unknown) => data,
-    removeItem: () => {
-      const test = ctx.stores.lists;
-    },
-  }));
+    removeItem: () => ({
+      offline: () => {},
+      optimistic: () => {},
+      rollback: () => {},
+    }),
+  }))
+  .getter(() => {});
 
 const listSchema = z.object({
   listId: z.string(),
